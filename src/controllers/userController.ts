@@ -22,7 +22,7 @@ export const handleUser = async (req: Request, res: Response) => {
           firstName: telegramUser.first_name,
           lastName: telegramUser.last_name,
           username: telegramUser.username,
-          region: regionIndex,
+          regionIndex: regionIndex,
         },
       });
     }
