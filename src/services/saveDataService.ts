@@ -9,9 +9,9 @@ export const saveDataService = async (data: ITelegramUser) => {
   const user = await prisma.user.create({
     data: {
       telegramId: data.tgWebAppData.user.id.toString(),
-      firstName: data.tgWebAppData.user.first_name,
-      lastName: data.tgWebAppData.user.last_name,
-      username: data.tgWebAppData.user.username,
+      firstName: data.tgWebAppData.user.first_name || "",
+      lastName: data.tgWebAppData.user.last_name || "",
+      username: data.tgWebAppData.user.username || "",
     },
   });
   return user;

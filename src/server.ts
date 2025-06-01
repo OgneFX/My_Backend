@@ -7,7 +7,7 @@ import questionRoutes from "./routes/question";
 dotenv.config();
 
 const app = express(); //Инициализировали express
-const PORT = process.env.PORT || 5000; // установили порт
+const PORT = process.env.PORT; // установили порт
 
 app.use(cors());
 app.use(express.json());
