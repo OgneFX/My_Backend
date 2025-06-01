@@ -39,3 +39,24 @@ interface ITelegramAppThemeParams {
   subtitle_text_color: string;
   text_color: string;
 }
+
+export interface IQuestion {
+  id: number;
+  title: string;
+  question: string;
+  options: QuestionOption[];
+  multiSelect: boolean;
+  category: string;
+  imageUrl?: string;
+}
+
+interface QuestionOption {
+  id: number;
+  text: string;
+}
+
+export interface IAnswer {
+  questionId: number;
+  optionId: number;
+  userId: number;
+}

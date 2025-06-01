@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { Test } from "../controllers/useTest";
+import { useTest, useCheck } from "../controllers/useTest";
 
 const router = Router();
 
-router.post("/", Test); // POST /api/user
+router.post("/", useTest); // POST /api/user
+router.get("/check", useCheck); // GET /api/user/check чекает зареган ли пользователь или нет
 
 export default router;
