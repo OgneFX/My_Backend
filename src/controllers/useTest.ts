@@ -16,7 +16,9 @@ export const useTest = async (req: Request, res: Response) => {
 
 export const useCheck = async (req: Request, res: Response) => {
   try {
+    console.log("дёргаем запрос чек");
     const userId: number = req.body;
+    console.log(userId);
     if (!userId) throw new Error("Данные не пришли");
     const user = await getUserByTelegramId(userId);
     res.status(200).json({ isRegistered: !!user });
