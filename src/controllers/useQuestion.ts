@@ -33,6 +33,8 @@ const mockQuestions: IQuestion[] = [
 export const useQuestion = async (req: Request, res: Response) => {
   try {
     res.json(mockQuestions);
+    console.log("we are here");
+    console.log(mockQuestions);
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });
   }
@@ -43,10 +45,10 @@ export const useAnswer = async (req: Request, res: Response) => {
     const answerData: IAnswer = req.body;
     if (!answerData.questionId || !answerData.optionId || !answerData.userId)
       throw new Error("Данные не пришли");
-    console.log(
-      `Ответ пользователя ${answerData.questionId} на вопрос ${answerData.optionId}:`,
-      answerData.userId
-    );
+    console.log("Данные с фронта");
+    console.log(answerData.questionId);
+    console.log(answerData.optionId);
+    console.log(answerData.userId);
     res.status(200).json({ message: "Ответ принят" });
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });

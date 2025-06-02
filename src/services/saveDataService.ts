@@ -18,7 +18,6 @@ export const saveDataService = async (data: ITelegramUser) => {
 };
 
 export const getUserByTelegramId = async (telegramId: number) => {
-  console.log("Дергаем сервис БД на проверку");
   const user = await prisma.user.findUnique({
     where: {
       telegramId: telegramId.toString(),

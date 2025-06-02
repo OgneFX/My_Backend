@@ -14,7 +14,6 @@ export const useTest = async (req, res) => {
 };
 export const useCheck = async (req, res) => {
     try {
-        console.log("дёргаем запрос чек");
         const userId = Number(req.query.userId);
         console.log(userId);
         if (!userId)
