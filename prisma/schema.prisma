@@ -9,9 +9,47 @@ datasource db {
 
 model User {
   id         Int      @id @default(autoincrement())
-  telegramId String   @unique
+  telegramId Int   @unique
   firstName  String?
   lastName   String?
   username   String?
+  photo      String?
   createdAt  DateTime @default(now())
+  answerLogs AnswerLog[] 
+}
+
+model Question {
+  id           Int              @id @default(autoincrement())
+  title        String                                // Заголовок карточки
+  question     String                                // Текст вопроса
+  multiSelect  Boolean          @default(false)      // Можно ли выбирать несколько вариантов
+  category     String                                // Категория (как группа)
+  imageUrl     String?                               // URL картинки (если есть)
+  isRecurring  Boolean          @default(false)      // Повторяющийся вопрос или нет
+  createdAt    DateTime         @default(now())      // Когда был создан
+
+  options      QuestionOption[]                      // Варианты ответа
+  answerLogs  AnswerLog[]
+}
+
+model QuestionOption {
+  id         Int       @id @default(autoincrement())
+  text       String                                 // Сам текст ответа
+  votes      Int       @default(0)                  // Количество голосов за этот вариант
+
+  question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId Int                                       // К какому вопросу относится
+}
+
+model AnswerLog {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId Int
+
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, questionId]) //  один пользователь — один ответ на один вопрос
 }

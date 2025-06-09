@@ -1,3 +1,4 @@
+import { answerService } from "../services/saveDataService";
 const mockQuestions = [
     {
         id: 1,
@@ -36,14 +37,11 @@ export const useQuestion = async (req, res) => {
     }
 };
 export const useAnswer = async (req, res) => {
+    const answerData = req.body;
     try {
-        const answerData = req.body;
         if (!answerData.questionId || !answerData.optionId || !answerData.userId)
             throw new Error("Данные не пришли");
-        console.log("Данные с фронта");
-        console.log(answerData.questionId);
-        console.log(answerData.optionId);
-        console.log(answerData.userId);
+        await answerService(answerData.userId, answerData.questionId, answerData.optionId);
         res.status(200).json({ message: "Ответ принят" });
     }
     catch (error) {

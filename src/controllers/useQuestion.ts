@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { IAnswer, IQuestion } from "../interfaces/userInterface";
+import { answerService } from "../services/saveDataService";
 
 const mockQuestions: IQuestion[] = [
   {
@@ -41,14 +42,15 @@ export const useQuestion = async (req: Request, res: Response) => {
 };
 
 export const useAnswer = async (req: Request, res: Response) => {
+  const answerData: IAnswer = req.body;
   try {
-    const answerData: IAnswer = req.body;
     if (!answerData.questionId || !answerData.optionId || !answerData.userId)
       throw new Error("Данные не пришли");
-    console.log("Данные с фронта");
-    console.log(answerData.questionId);
-    console.log(answerData.optionId);
-    console.log(answerData.userId);
+    await answerService(
+      answerData.userId,
+      answerData.questionId,
+      answerData.optionId
+    );
     res.status(200).json({ message: "Ответ принят" });
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });

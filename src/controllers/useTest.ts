@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import { saveDataService } from "../services/saveDataService";
+import {
+  saveDataService,
+  getUserByTelegramId,
+} from "../services/saveDataService";
 import { ITelegramUser } from "../interfaces/userInterface";
-import { getUserByTelegramId } from "../services/saveDataService";
 
 export const useTest = async (req: Request, res: Response) => {
   try {
@@ -17,7 +19,6 @@ export const useTest = async (req: Request, res: Response) => {
 export const useCheck = async (req: Request, res: Response) => {
   try {
     const userId = Number(req.query.userId);
-    console.log(userId);
     if (!userId) throw new Error("Данные не пришли");
     const user = await getUserByTelegramId(userId);
     res.status(200).json({ isRegistered: !!user });

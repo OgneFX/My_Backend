@@ -9,7 +9,7 @@ dotenv.config();
 const app = express(); //Инициализировали express
 const PORT = process.env.PORT; // установили порт
 
-app.use(cors());
+app.use(cors()); //разробраться с CORS
 app.use(express.json());
 
 app.use("/api/user", userRoutes);

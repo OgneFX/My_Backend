@@ -8,7 +8,7 @@ const prisma = new PrismaClient({
 export const saveDataService = async (data: ITelegramUser) => {
   const user = await prisma.user.create({
     data: {
-      telegramId: data.tgWebAppData.user.id.toString(),
+      telegramId: data.tgWebAppData.user.id,
       firstName: data.tgWebAppData.user.first_name || "",
       lastName: data.tgWebAppData.user.last_name || "",
       username: data.tgWebAppData.user.username || "",
@@ -20,8 +20,37 @@ export const saveDataService = async (data: ITelegramUser) => {
 export const getUserByTelegramId = async (telegramId: number) => {
   const user = await prisma.user.findUnique({
     where: {
-      telegramId: telegramId.toString(),
+      telegramId: telegramId,
     },
   });
   return user;
+};
+
+export const answerService = async (
+  userId: number,
+  questionId: number,
+  optionId: number
+) => {
+  const checkAnswer = await prisma.answerLog.findUnique({
+    where: {
+      userId_questionId: { userId, questionId },
+    },
+  });
+  if (checkAnswer) {
+    throw new Error("Пользователь уже ответил на этот вопрос");
+  }
+
+  await prisma.$transaction([
+    prisma.questionOption.update({
+      where: { id: optionId },
+      data: { votes: { increment: 1 } },
+    }),
+    prisma.answerLog.create({
+      data: {
+        userId,
+        questionId,
+      },
+    }),
+  ]);
+  return { success: true };
 };
