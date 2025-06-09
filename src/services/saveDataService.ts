@@ -54,3 +54,12 @@ export const answerService = async (
   ]);
   return { success: true };
 };
+
+export const getQuestions = async () => {
+  const questions = await prisma.question.findMany({
+    include: {
+      options: true,
+    },
+  });
+  return questions;
+};

@@ -44,3 +44,11 @@ export const answerService = async (userId, questionId, optionId) => {
     ]);
     return { success: true };
 };
+export const getQuestions = async () => {
+    const questions = await prisma.question.findMany({
+        include: {
+            options: true,
+        },
+    });
+    return questions;
+};

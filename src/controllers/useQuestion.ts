@@ -1,41 +1,41 @@
 import { Request, Response } from "express";
 import { IAnswer, IQuestion } from "../interfaces/userInterface";
-import { answerService } from "../services/saveDataService";
+import { answerService, getQuestions } from "../services/saveDataService";
 
-const mockQuestions: IQuestion[] = [
-  {
-    id: 1,
-    title: "Здоровье",
-    question: "Как вы себя сегодня чувствуете?",
-    options: [
-      { id: 1, text: "Отлично" },
-      { id: 2, text: "Нормально" },
-      { id: 3, text: "Плохо" },
-    ],
-    multiSelect: false,
-    category: "health",
-    imageUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtFFGdhkIOkXMSxS7ppzG7tt_UX-Y4E2sznA&s",
-  },
-  {
-    id: 2,
-    title: "Настроение",
-    question: "Какое у вас настроение?",
-    options: [
-      { id: 1, text: "Весёлое" },
-      { id: 2, text: "Спокойное" },
-      { id: 3, text: "Грустное" },
-    ],
-    multiSelect: false,
-    category: "mood",
-  },
-];
+// const mockQuestions: IQuestion[] = [
+//   {
+//     id: 1,
+//     title: "Здоровье",
+//     question: "Как вы себя сегодня чувствуете?",
+//     options: [
+//       { id: 1, text: "Отлично" },
+//       { id: 2, text: "Нормально" },
+//       { id: 3, text: "Плохо" },
+//     ],
+//     multiSelect: false,
+//     category: "health",
+//     imageUrl:
+//       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtFFGdhkIOkXMSxS7ppzG7tt_UX-Y4E2sznA&s",
+//   },
+//   {
+//     id: 2,
+//     title: "Настроение",
+//     question: "Какое у вас настроение?",
+//     options: [
+//       { id: 1, text: "Весёлое" },
+//       { id: 2, text: "Спокойное" },
+//       { id: 3, text: "Грустное" },
+//     ],
+//     multiSelect: false,
+//     category: "mood",
+//   },
+// ];
 
 export const useQuestion = async (req: Request, res: Response) => {
   try {
-    res.json(mockQuestions);
+    const questions = await getQuestions();
+    res.json(questions); //Сделать
     console.log("we are here");
-    console.log(mockQuestions);
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });
   }
