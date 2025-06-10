@@ -43,7 +43,7 @@ model QuestionOption {
 
 model AnswerLog {
   id         Int      @id @default(autoincrement())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [telegramId], onDelete: Cascade)
   userId     Int
 
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
