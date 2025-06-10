@@ -34,7 +34,7 @@ import { answerService, getQuestions } from "../services/saveDataService";
 export const useQuestion = async (req: Request, res: Response) => {
   try {
     const questions = await getQuestions();
-    res.json(questions); //Сделать
+    res.json(questions);
     console.log("we are here");
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });
@@ -44,8 +44,12 @@ export const useQuestion = async (req: Request, res: Response) => {
 export const useAnswer = async (req: Request, res: Response) => {
   const answerData: IAnswer = req.body;
   try {
-    if (!answerData.questionId || !answerData.optionId || !answerData.userId)
+    console.log("в контроллере");
+    console.log(answerData);
+    if (!answerData.questionId || !answerData.optionId || !answerData.userId) {
       throw new Error("Данные не пришли");
+    }
+
     await answerService(
       answerData.userId,
       answerData.questionId,

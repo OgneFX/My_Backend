@@ -36,6 +36,8 @@ export const answerService = async (
       userId_questionId: { userId, questionId },
     },
   });
+  console.log("в сервисе");
+  console.log(checkAnswer);
   if (checkAnswer) {
     throw new Error("Пользователь уже ответил на этот вопрос");
   }
