@@ -32,6 +32,7 @@ export const useQuestion = async (req, res) => {
         const questions = await getQuestions();
         res.json(questions);
         console.log("we are here");
+        console.log(questions);
     }
     catch (error) {
         res.status(400).json({ error: "Всё плохо!" });
