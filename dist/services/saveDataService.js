@@ -9,6 +9,8 @@ export const saveDataService = async (data) => {
             firstName: data.tgWebAppData.user.first_name || "",
             lastName: data.tgWebAppData.user.last_name || "",
             username: data.tgWebAppData.user.username || "",
+            photo: data.tgWebAppData.user.photo_url || "",
+            languageCode: data.tgWebAppData.user.language_code || "",
         },
     });
     return user;
@@ -27,8 +29,6 @@ export const answerService = async (userId, questionId, optionId) => {
             userId_questionId: { userId, questionId },
         },
     });
-    console.log("в сервисе");
-    console.log(checkAnswer);
     if (checkAnswer) {
         throw new Error("Пользователь уже ответил на этот вопрос");
     }
@@ -46,11 +46,29 @@ export const answerService = async (userId, questionId, optionId) => {
     ]);
     return { success: true };
 };
-export const getQuestions = async () => {
-    const questions = await prisma.question.findMany({
+export const getQuestions = async (userId, twentyFourHourAgo) => {
+    const allQuestions = await prisma.question.findMany({
+        where: {
+            createdAt: {
+                gte: twentyFourHourAgo,
+            },
+        },
         include: {
             options: true,
         },
     });
-    return questions;
+    const answeredQuestions = await prisma.answerLog.findMany({
+        where: {
+            userId,
+            questionId: {
+                in: allQuestions.map((q) => q.id),
+            },
+        },
+        select: {
+            questionId: true,
+        },
+    });
+    const answeredIds = answeredQuestions.map((a) => a.questionId);
+    const unansweredQuestions = allQuestions.filter((q) => !answeredIds.includes(q.id));
+    return unansweredQuestions;
 };

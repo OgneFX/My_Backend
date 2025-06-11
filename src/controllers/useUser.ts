@@ -5,9 +5,10 @@ import {
 } from "../services/saveDataService";
 import { ITelegramUser } from "../interfaces/userInterface";
 
-export const useTest = async (req: Request, res: Response) => {
+export const useUser = async (req: Request, res: Response) => {
   try {
     const userObj: ITelegramUser = req.body;
+    console.log(userObj);
     if (!userObj) throw new Error("Данные не пришли");
     await saveDataService(userObj);
     res.status(200).json({ message: "Всё отлично!" });

@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { useQuestion, useAnswer } from "../controllers/useQuestion";
+import { useAnswer, useQuestion } from "../controllers/useQuestion";
 const router = Router();
+//api/question
 router.post("/answer", useAnswer);
 router.get("/", useQuestion);
 export default router;
