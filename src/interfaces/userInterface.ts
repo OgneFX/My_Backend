@@ -3,6 +3,7 @@ export interface ITelegramUser {
   tgWebAppPlatform: string;
   tgWebAppThemeParams: ITelegramAppThemeParams;
   tgWebAppVersion: string;
+  regionIndex: number;
 }
 
 interface ITelegramWebAppData {

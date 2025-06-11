@@ -2,7 +2,6 @@ import { saveDataService, getUserByTelegramId, } from "../services/saveDataServi
 export const useUser = async (req, res) => {
     try {
         const userObj = req.body;
-        console.log(userObj);
         if (!userObj)
             throw new Error("Данные не пришли");
         await saveDataService(userObj);

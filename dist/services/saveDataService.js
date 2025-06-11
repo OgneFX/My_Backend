@@ -11,6 +11,7 @@ export const saveDataService = async (data) => {
             username: data.tgWebAppData.user.username || "",
             photo: data.tgWebAppData.user.photo_url || "",
             languageCode: data.tgWebAppData.user.language_code || "",
+            regionIndex: data.regionIndex,
         },
     });
     return user;

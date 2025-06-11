@@ -15,6 +15,7 @@ model User {
   username   String?
   photo      String?
   languageCode String?
+  regionIndex Int
   createdAt  DateTime @default(now())
   answerLogs AnswerLog[] 
 }
