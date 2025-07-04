@@ -110,6 +110,8 @@ export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
           id: true,
         },
       });
+      console.log("Мы работаем с БД");
+      console.log(questionIn);
 
       const createdOptions = await tx.questionOption.createMany({
         data: questionIn.answer.map((text) => ({

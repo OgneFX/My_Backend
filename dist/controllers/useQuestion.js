@@ -32,6 +32,8 @@ export const addNewQuestion = async (req, res) => {
         if (!question) {
             throw new Error("Данные от пользователя не пришли");
         }
+        console.log("мы в useQuest");
+        console.log(question);
         await addNewQuestionInBD(question);
         res.status(200).json({ message: "Ответ принят" });
     }
