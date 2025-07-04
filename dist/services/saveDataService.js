@@ -96,7 +96,7 @@ export const addNewQuestionInBD = async (questionIn) => {
             console.log("Мы работаем с БД");
             console.log(questionIn);
             const createdOptions = await tx.questionOption.createMany({
-                data: questionIn.answer.map((text) => ({
+                data: questionIn.answers.map((text) => ({
                     text,
                     questionId: createdQuestion.id,
                     votes: 0,

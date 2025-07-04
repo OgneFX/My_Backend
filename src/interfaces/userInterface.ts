@@ -63,7 +63,7 @@ export interface IAnswer {
 }
 
 export interface IForAddNewQuestion {
-  answer: string[];
+  answers: string[];
   category: string;
   imageUrl?: string;
   isRecurring: boolean;
