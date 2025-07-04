@@ -1,4 +1,4 @@
-import { answerService, getQuestions } from "../services/saveDataService";
+import { answerService, getQuestions, addNewQuestionInBD, } from "../services/saveDataService";
 export const useQuestion = async (req, res) => {
     const userId = Number(req.query.userId);
     if (!userId) {
@@ -20,6 +20,19 @@ export const useAnswer = async (req, res) => {
             throw new Error("Данные не пришли");
         }
         await answerService(answerData.userId, answerData.questionId, answerData.optionId);
+        res.status(200).json({ message: "Ответ принят" });
+    }
+    catch (error) {
+        res.status(400).json({ error: "Всё плохо!" });
+    }
+};
+export const addNewQuestion = async (req, res) => {
+    const question = req.body;
+    try {
+        if (!question) {
+            throw new Error("Данные от пользователя не пришли");
+        }
+        await addNewQuestionInBD(question);
         res.status(200).json({ message: "Ответ принят" });
     }
     catch (error) {

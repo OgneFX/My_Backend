@@ -61,3 +61,13 @@ export interface IAnswer {
   optionId: number;
   userId: number;
 }
+
+export interface IForAddNewQuestion {
+  answer: string[];
+  category: string;
+  imageUrl?: string;
+  isRecurring: boolean;
+  multiSelect: boolean;
+  question: string;
+  title: string;
+}

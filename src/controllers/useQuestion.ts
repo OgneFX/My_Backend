@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
-import { IAnswer } from "../interfaces/userInterface";
-import { answerService, getQuestions } from "../services/saveDataService";
+import { IAnswer, IForAddNewQuestion } from "../interfaces/userInterface";
+import {
+  answerService,
+  getQuestions,
+  addNewQuestionInBD,
+} from "../services/saveDataService";
 
 export const useQuestion = async (req: Request, res: Response) => {
   const userId = Number(req.query.userId);
@@ -28,6 +32,20 @@ export const useAnswer = async (req: Request, res: Response) => {
       answerData.questionId,
       answerData.optionId
     );
+    res.status(200).json({ message: "Ответ принят" });
+  } catch (error) {
+    res.status(400).json({ error: "Всё плохо!" });
+  }
+};
+
+export const addNewQuestion = async (req: Request, res: Response) => {
+  const question: IForAddNewQuestion = req.body;
+  try {
+    if (!question) {
+      throw new Error("Данные от пользователя не пришли");
+    }
+
+    await addNewQuestionInBD(question);
     res.status(200).json({ message: "Ответ принят" });
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });

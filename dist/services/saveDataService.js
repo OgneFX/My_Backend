@@ -73,3 +73,41 @@ export const getQuestions = async (userId, twentyFourHourAgo) => {
     const unansweredQuestions = allQuestions.filter((q) => !answeredIds.includes(q.id));
     return unansweredQuestions;
 };
+export const addNewQuestionInBD = async (questionIn) => {
+    if (!questionIn) {
+        throw new Error("данные не пришли");
+    }
+    try {
+        const result = await prisma.$transaction(async (tx) => {
+            const createdQuestion = await tx.question.create({
+                data: {
+                    title: questionIn.title,
+                    question: questionIn.question,
+                    multiSelect: questionIn.multiSelect,
+                    category: questionIn.category,
+                    imageUrl: questionIn.imageUrl,
+                    isRecurring: questionIn.isRecurring,
+                    createdAt: new Date(),
+                },
+                select: {
+                    id: true,
+                },
+            });
+            const createdOptions = await tx.questionOption.createMany({
+                data: questionIn.answer.map((text) => ({
+                    text,
+                    questionId: createdQuestion.id,
+                    votes: 0,
+                })),
+            });
+            return {
+                questionId: createdQuestion.id,
+                optionsCount: createdOptions.count,
+            };
+        });
+        return result;
+    }
+    catch (error) {
+        console.error("Error creating question with options:", error);
+    }
+};
