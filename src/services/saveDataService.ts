@@ -132,3 +132,43 @@ export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
     console.error("Error creating question with options:", error);
   }
 };
+
+// services/saveDataService.ts
+
+export const cloneRecurringQuestions = async () => {
+  // Находим все recurring-вопросы
+  const recurringQuestions = await prisma.question.findMany({
+    where: {
+      isRecurring: true,
+    },
+    include: {
+      options: true,
+    },
+  });
+
+  // Клонируем каждый вопрос
+  for (const question of recurringQuestions) {
+    await prisma.$transaction([
+      // Создаем новый вопрос
+      prisma.question.create({
+        data: {
+          title: question.title,
+          question: question.question,
+          multiSelect: question.multiSelect,
+          category: question.category,
+          imageUrl: question.imageUrl,
+          isRecurring: true, // сохраняем флаг
+          createdAt: new Date(), // новая дата создания
+          options: {
+            createMany: {
+              data: question.options.map((opt) => ({
+                text: opt.text,
+                votes: 0, // сбрасываем счетчики
+              })),
+            },
+          },
+        },
+      }),
+    ]);
+  }
+};
