@@ -17,7 +17,9 @@ export const useCheck = async (req, res) => {
         if (!userId)
             throw new Error("Данные не пришли");
         const user = await getUserByTelegramId(userId);
-        res.status(200).json({ isRegistered: !!user });
+        console.log("в useUser");
+        console.log(user);
+        res.status(200).json({ isRegistered: user ? true : false });
     }
     catch (error) {
         res.status(400).json({ error: "Всё плохо!" });

@@ -26,6 +26,8 @@ export const getUserByTelegramId = async (telegramId: number) => {
       telegramId: telegramId,
     },
   });
+  console.log("получили с бд что то");
+  console.log(user);
   return user;
 };
 

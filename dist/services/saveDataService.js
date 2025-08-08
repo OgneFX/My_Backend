@@ -22,6 +22,8 @@ export const getUserByTelegramId = async (telegramId) => {
             telegramId: telegramId,
         },
     });
+    console.log("получили с бд что то");
+    console.log(user);
     return user;
 };
 export const answerService = async (userId, questionId, optionId) => {
