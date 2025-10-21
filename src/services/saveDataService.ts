@@ -138,10 +138,16 @@ export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
 // services/saveDataService.ts
 
 export const cloneRecurringQuestions = async () => {
+
+   const today = new Date();
+   today.setHours(0, 0, 0, 0);
   // Находим все recurring-вопросы
   const recurringQuestions = await prisma.question.findMany({
     where: {
       isRecurring: true,
+      createdAt: {
+        lt: today
+      }
     },
     include: {
       options: true,
