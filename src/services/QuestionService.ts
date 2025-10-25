@@ -1,39 +1,8 @@
+import { prisma } from "../prisma/client";
 import {
-  ITelegramUser,
   IForAddNewQuestion,
   QuestionTemplate,
 } from "../interfaces/userInterface";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient({
-  log: ["query", "info", "warn", "error"],
-});
-
-export const saveDataService = async (data: ITelegramUser) => {
-  const user = await prisma.user.create({
-    data: {
-      telegramId: data.tgWebAppData.user.id,
-      firstName: data.tgWebAppData.user.first_name || "",
-      lastName: data.tgWebAppData.user.last_name || "",
-      username: data.tgWebAppData.user.username || "",
-      photo: data.tgWebAppData.user.photo_url || "",
-      languageCode: data.tgWebAppData.user.language_code || "",
-      regionIndex: data.regionIndex,
-    },
-  });
-  return user;
-};
-
-export const getUserByTelegramId = async (telegramId: number) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      telegramId: telegramId,
-    },
-  });
-  console.log("получили с бд что то");
-  console.log(user);
-  return user;
-};
 
 export const answerService = async (
   userId: number,
@@ -63,11 +32,31 @@ export const answerService = async (
   ]);
   return { success: true };
 };
-//тут разобраться, добавить данных
+
 export const getQuestions = async (userId: number) => {
   const now = new Date();
 
-  // 1. Сначала получаем ID вопросов, на которые пользователь уже ответил
+  // 1. Получаем данные пользователя (регион и подписки)
+  const user = await prisma.user.findUnique({
+    where: { telegramId: userId },
+    select: {
+      regionIndex: true,
+      following: {
+        select: {
+          followingId: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // 2. Получаем ID авторов, на которых подписан пользователь
+  const followingIds = user.following.map((f) => f.followingId);
+
+  // 3. Получаем ID вопросов, на которые пользователь уже ответил
   const answered = await prisma.answerLog.findMany({
     where: { userId },
     select: { questionId: true },
@@ -75,7 +64,7 @@ export const getQuestions = async (userId: number) => {
 
   const answeredIds = answered.map((a) => a.questionId);
 
-  // 2. Теперь получаем активные вопросы, на которые пользователь ещё не ответил
+  // 4. Теперь получаем активные вопросы, на которые пользователь ещё не ответил
   const questions = await prisma.question.findMany({
     where: {
       activeUntil: {
@@ -84,9 +73,27 @@ export const getQuestions = async (userId: number) => {
       id: {
         notIn: answeredIds, // исключаем уже отвеченные
       },
+      OR: [
+        {
+          regionIndex: {
+            in: [user.regionIndex, 0],
+          },
+        },
+        {
+          authorId: {
+            in: followingIds,
+          },
+        },
+      ],
     },
+
     include: {
       options: true,
+      author: {
+        select: {
+          username: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",

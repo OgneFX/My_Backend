@@ -1,15 +1,12 @@
 import { Request, Response } from "express";
-import {
-  saveDataService,
-  getUserByTelegramId,
-} from "../services/saveDataService";
+import { saveUserService, getUserByTelegramId } from "../services/UserService";
 import { ITelegramUser } from "../interfaces/userInterface";
 
 export const useUser = async (req: Request, res: Response) => {
   try {
     const userObj: ITelegramUser = req.body;
     if (!userObj) throw new Error("Данные не пришли");
-    const user = await saveDataService(userObj);
+    const user = await saveUserService(userObj);
     if (user) {
       res.status(200).json({ message: "Всё отлично!", success: true });
     } else {

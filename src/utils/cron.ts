@@ -1,6 +1,6 @@
 // utils/cron.ts
 import cron from "node-cron";
-import { cloneRecurringQuestions } from "../services/saveDataService";
+import { cloneRecurringQuestions } from "../services/UserService";
 
 export const startCronJobs = () => {
   // Каждый день в 00:00

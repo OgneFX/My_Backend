@@ -4,7 +4,7 @@ import {
   answerService,
   getQuestions,
   addNewQuestionInBD,
-} from "../services/saveDataService";
+} from "../services/QuestionService";
 
 export const useQuestion = async (req: Request, res: Response) => {
   const userId = Number(req.query.userId);
