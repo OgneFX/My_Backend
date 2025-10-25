@@ -1,3 +1,32 @@
+import { User } from "@prisma/client";
+
+export interface QuestionOptionTemplate {
+  id: number;
+  text: string;
+  templateId: number;
+}
+
+export interface QuestionTemplate {
+  id: number;
+  title: string;
+  question: string;
+  category: string;
+  imageUrl?: string | null;
+  multiSelect: boolean;
+  regionIndex: number;
+
+  activeDuration: number;
+  isActive: boolean;
+  startAt: Date;
+  lastGenerated: Date;
+  createdAt: Date;
+
+  authorId: number;
+  author: User;
+
+  options: QuestionOptionTemplate[];
+}
+
 export interface ITelegramUser {
   tgWebAppData: ITelegramWebAppData;
   tgWebAppPlatform: string;
@@ -64,10 +93,25 @@ export interface IAnswer {
 
 export interface IForAddNewQuestion {
   answers: string[];
+  templateId?: number;
   category: string;
   imageUrl?: string;
   isRecurring: boolean;
   multiSelect: boolean;
+  activeUntil: Date;
+  authorId: User;
   question: string;
   title: string;
+}
+
+export interface IForAddNewTemplate {
+  title: string;
+  question: string;
+  category: string;
+  imageUrl?: string;
+  multiSelect: boolean;
+  regionIndex: number;
+  activeDuration: number;
+  repeatEvery: number;
+  repeatUnit: "day" | "week" | "month";
 }

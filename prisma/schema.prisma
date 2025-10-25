@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RepeatUnit {
+  day
+  week
+  month
+}
+
 model User {
   id         Int      @id @default(autoincrement())
   telegramId Int   @unique
@@ -15,23 +21,84 @@ model User {
   username   String?
   photo      String?
   languageCode String?
-  regionIndex Int
+  regionIndex Int @default(0)
   createdAt  DateTime @default(now())
-  answerLogs AnswerLog[] 
+  answerLogs AnswerLog[]
+  followers  Follow[] @relation("followers")
+  following  Follow[] @relation("following")
+  questions Question[]
+  template QuestionTemplate[]
+
+  @@index([telegramId])
+  @@index([createdAt])
+}
+
+model Follow {
+  id        Int      @id @default(autoincrement())
+  follower  User     @relation("following", fields: [followerId], references: [telegramId])
+  followerId Int
+  following User     @relation("followers", fields: [followingId], references: [telegramId])
+  followingId Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model QuestionTemplate  {
+  id              Int       @id @default(autoincrement())
+  title           String
+  question        String
+  category        String
+  imageUrl        String?
+  multiSelect     Boolean   @default(false)
+  regionIndex     Int       @default(0) //Если ноль, то вопросы глобальные (для всех пользователей)
+
+  activeDuration  Int       //Сколько дней вопрос активен
+  isActive        Boolean   @default(true) // включен/выключен шаблон
+  startAt         DateTime  // Когда шаблон начинает генерировать вопросы
+  lastGenerated   DateTime  // когда последний раз был создан вопрос
+  createdAt       DateTime  @default(now())
+
+  options         QuestionOptionTemplate[]
+  questions       Question[]
+
+  authorId        Int
+  author          User      @relation(fields:[authorId], references: [telegramId])
+
+  @@index([isActive, lastGenerated])
+}
+
+model QuestionOptionTemplate  {
+  id              Int       @id @default(autoincrement())
+  text            String
+  template        QuestionTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId      Int
 }
 
 model Question {
   id           Int              @id @default(autoincrement())
+  templateId   Int?
   title        String                                // Заголовок карточки
   question     String                                // Текст вопроса
   multiSelect  Boolean          @default(false)      // Можно ли выбирать несколько вариантов
+  regionIndex  Int              @default(0)          //Если ноль, то вопросы глобальные (для всех пользователей)
   category     String                                // Категория (как группа)
   imageUrl     String?                               // URL картинки (если есть)
   isRecurring  Boolean          @default(false)      // Повторяющийся вопрос или нет
   createdAt    DateTime         @default(now())      // Когда был создан
+  activeUntil  DateTime
+
+  authorId     Int
+  author       User            @relation(fields: [authorId], references: [telegramId])
 
   options      QuestionOption[]                      // Варианты ответа
-  answerLogs  AnswerLog[]
+  answerLogs   AnswerLog[]
+  template     QuestionTemplate? @relation(fields: [templateId], references: [id])
+
+  @@index([category])
+  @@index([activeUntil])
+  @@index([createdAt])
 }
 
 model QuestionOption {
@@ -41,6 +108,7 @@ model QuestionOption {
 
   question   Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId Int                                       // К какому вопросу относится
+
 }
 
 model AnswerLog {
@@ -54,4 +122,7 @@ model AnswerLog {
   createdAt  DateTime @default(now())
 
   @@unique([userId, questionId]) //  один пользователь — один ответ на один вопрос
+  @@index([userId])
+  @@index([questionId])
+  @@index([createdAt])
 }

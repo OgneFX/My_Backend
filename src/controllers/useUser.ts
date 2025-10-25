@@ -9,10 +9,14 @@ export const useUser = async (req: Request, res: Response) => {
   try {
     const userObj: ITelegramUser = req.body;
     if (!userObj) throw new Error("Данные не пришли");
-    await saveDataService(userObj);
-    res.status(200).json({ message: "Всё отлично!" });
+    const user = await saveDataService(userObj);
+    if (user) {
+      res.status(200).json({ message: "Всё отлично!", success: true });
+    } else {
+      res.status(400).json({ error: "Всё плохо!", success: false });
+    }
   } catch (error) {
-    res.status(400).json({ error: "Всё плохо!" });
+    res.status(400).json({ error: "Всё плохо!", success: false });
   }
 };
 

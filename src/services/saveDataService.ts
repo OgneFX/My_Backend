@@ -1,4 +1,8 @@
-import { ITelegramUser, IForAddNewQuestion } from "../interfaces/userInterface";
+import {
+  ITelegramUser,
+  IForAddNewQuestion,
+  QuestionTemplate,
+} from "../interfaces/userInterface";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient({
@@ -59,37 +63,37 @@ export const answerService = async (
   ]);
   return { success: true };
 };
+//тут разобраться, добавить данных
+export const getQuestions = async (userId: number) => {
+  const now = new Date();
 
-export const getQuestions = async (userId: number, twentyFourHourAgo: Date) => {
-  const allQuestions = await prisma.question.findMany({
+  // 1. Сначала получаем ID вопросов, на которые пользователь уже ответил
+  const answered = await prisma.answerLog.findMany({
+    where: { userId },
+    select: { questionId: true },
+  });
+
+  const answeredIds = answered.map((a) => a.questionId);
+
+  // 2. Теперь получаем активные вопросы, на которые пользователь ещё не ответил
+  const questions = await prisma.question.findMany({
     where: {
-      createdAt: {
-        gte: twentyFourHourAgo,
+      activeUntil: {
+        gt: now, // активен до этого времени
+      },
+      id: {
+        notIn: answeredIds, // исключаем уже отвеченные
       },
     },
     include: {
       options: true,
     },
-  });
-
-  const answeredQuestions = await prisma.answerLog.findMany({
-    where: {
-      userId,
-      questionId: {
-        in: allQuestions.map((q) => q.id),
-      },
-    },
-    select: {
-      questionId: true,
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
-  const answeredIds = answeredQuestions.map((a) => a.questionId);
-  const unansweredQuestions = allQuestions.filter(
-    (q) => !answeredIds.includes(q.id)
-  );
-
-  return unansweredQuestions;
+  return questions;
 };
 
 export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
@@ -106,6 +110,8 @@ export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
           category: questionIn.category,
           imageUrl: questionIn.imageUrl,
           isRecurring: questionIn.isRecurring,
+          activeUntil: questionIn.activeUntil,
+          authorId: questionIn.authorId.id,
           createdAt: new Date(),
         },
         select: {
@@ -138,45 +144,62 @@ export const addNewQuestionInBD = async (questionIn: IForAddNewQuestion) => {
 // services/saveDataService.ts
 
 export const cloneRecurringQuestions = async () => {
-
-   const today = new Date();
-   today.setHours(0, 0, 0, 0);
-  // Находим все recurring-вопросы
-  const recurringQuestions = await prisma.question.findMany({
+  const now = new Date();
+  //  Находим все активные шаблоны
+  const templates = await prisma.questionTemplate.findMany({
     where: {
-      isRecurring: true,
-      createdAt: {
-        lt: today
-      }
+      isActive: true,
+      startAt: { lte: now },
     },
     include: {
       options: true,
+      author: true,
     },
   });
 
   // Клонируем каждый вопрос
-  for (const question of recurringQuestions) {
-    await prisma.$transaction([
-      // Создаем новый вопрос
-      prisma.question.create({
-        data: {
-          title: question.title,
-          question: question.question,
-          multiSelect: question.multiSelect,
-          category: question.category,
-          imageUrl: question.imageUrl,
-          isRecurring: true, // сохраняем флаг
-          createdAt: new Date(), // новая дата создания
-          options: {
-            createMany: {
-              data: question.options.map((opt) => ({
-                text: opt.text,
-                votes: 0, // сбрасываем счетчики
-              })),
-            },
-          },
-        },
-      }),
-    ]);
+  for (const template of templates) {
+    const nextGenerateDate = new Date(template.lastGenerated);
+    nextGenerateDate.setDate(
+      nextGenerateDate.getDate() + template.activeDuration
+    );
+
+    if (now >= nextGenerateDate) {
+      await createQuestionFromTemplate(template, now);
+    }
   }
+};
+
+const createQuestionFromTemplate = async (
+  template: QuestionTemplate,
+  now: Date
+) => {
+  const activeUntil = new Date(now);
+  activeUntil.setDate(activeUntil.getDate() + template.activeDuration);
+
+  const newQuestion = await prisma.question.create({
+    data: {
+      title: template.title,
+      question: template.question,
+      category: template.category,
+      imageUrl: template.imageUrl,
+      multiSelect: template.multiSelect,
+      regionIndex: template.regionIndex,
+      authorId: template.authorId,
+      isRecurring: true,
+      createdAt: now,
+      activeUntil,
+      templateId: template.id,
+      options: {
+        create: template.options.map((opt) => ({
+          text: opt.text,
+        })),
+      },
+    },
+  });
+
+  await prisma.questionTemplate.update({
+    where: { id: template.id },
+    data: { lastGenerated: now },
+  });
 };
