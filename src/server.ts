@@ -17,9 +17,9 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://your-frontend-domain.vercel.app",
-    ], // 👈 разрешённые источники
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "x-api-key"], // 👈 обязательно включи свой кастомный заголовок
+    allowedHeaders: ["Content-Type", "x-api-key"],
     credentials: true,
   })
 ); //разробраться с CORS

@@ -98,7 +98,7 @@ export const addNewQuestionInBD = async (questionIn) => {
                     imageUrl: questionIn.imageUrl,
                     isRecurring: questionIn.isRecurring,
                     activeUntil: questionIn.activeUntil,
-                    authorId: questionIn.authorId.id,
+                    authorId: questionIn.authorId,
                     createdAt: new Date(),
                 },
                 select: {
