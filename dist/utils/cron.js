@@ -1,9 +1,9 @@
 // utils/cron.ts
 import cron from "node-cron";
-import { cloneRecurringQuestions } from "../services/saveDataService";
+import { cloneRecurringQuestions } from "../services/QuestionService";
 export const startCronJobs = () => {
     // Каждый день в 00:00
-    cron.schedule("0 0 * * *", async () => {
+    cron.schedule("1 * * * *", async () => {
         console.log("Running daily question cloning...");
         try {
             await cloneRecurringQuestions();

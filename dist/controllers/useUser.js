@@ -1,14 +1,19 @@
-import { saveDataService, getUserByTelegramId, } from "../services/saveDataService";
+import { saveUserService, getUserByTelegramId } from "../services/UserService";
 export const useUser = async (req, res) => {
     try {
         const userObj = req.body;
         if (!userObj)
             throw new Error("Данные не пришли");
-        await saveDataService(userObj);
-        res.status(200).json({ message: "Всё отлично!" });
+        const user = await saveUserService(userObj);
+        if (user) {
+            res.status(200).json({ message: "Всё отлично!", success: true });
+        }
+        else {
+            res.status(400).json({ error: "Всё плохо!", success: false });
+        }
     }
     catch (error) {
-        res.status(400).json({ error: "Всё плохо!" });
+        res.status(400).json({ error: "Всё плохо!", success: false });
     }
 };
 export const useCheck = async (req, res) => {

@@ -1,12 +1,11 @@
-import { answerService, getQuestions, addNewQuestionInBD, } from "../services/saveDataService";
+import { answerService, getQuestions, addNewQuestionInBD, } from "../services/QuestionService";
 export const useQuestion = async (req, res) => {
     const userId = Number(req.query.userId);
     if (!userId) {
         res.status(400).json({ error: "Пользователь не найден" });
     }
     try {
-        const twentyFourHourAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const questions = await getQuestions(userId, twentyFourHourAgo);
+        const questions = await getQuestions(userId);
         res.status(200).json(questions);
     }
     catch (error) {
