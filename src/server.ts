@@ -12,7 +12,17 @@ const PORT = process.env.PORT; // установили порт
 
 startCronJobs();
 
-app.use(cors()); //разробраться с CORS
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://your-frontend-domain.vercel.app",
+    ], // 👈 разрешённые источники
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "x-api-key"], // 👈 обязательно включи свой кастомный заголовок
+    credentials: true,
+  })
+); //разробраться с CORS
 app.use(express.json());
 
 app.use("/api/user", userRoutes);
