@@ -14,10 +14,7 @@ startCronJobs();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://your-frontend-domain.vercel.app",
-    ],
+    origin: ["http://localhost:5173", "https://my-frontend-pink.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "x-api-key"],
     credentials: true,
