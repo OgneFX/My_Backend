@@ -105,14 +105,17 @@ export interface IForAddNewQuestion {
   title: string;
 }
 
-export interface IForAddNewTemplate {
+export interface IForAddNewQuestionTemplate {
+  answers: string[];
   title: string;
   question: string;
   category: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   multiSelect: boolean;
   regionIndex: number;
-  activeDuration: number;
-  repeatEvery: number;
-  repeatUnit: "day" | "week" | "month";
+  authorId: number;
+  activeDuration: number; // например, 7 дней
+  isActive?: boolean;
+  startAt?: Date;
+  lastGenerated?: Date;
 }

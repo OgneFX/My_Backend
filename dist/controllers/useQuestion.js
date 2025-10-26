@@ -1,4 +1,4 @@
-import { answerService, getQuestions, addNewQuestionInBD, } from "../services/QuestionService";
+import { answerService, getQuestions, addNewQuestionInBD, addNewQuestionTemplateInBD, } from "../services/QuestionService";
 export const useQuestion = async (req, res) => {
     const userId = Number(req.query.userId);
     if (!userId) {
@@ -38,5 +38,14 @@ export const addNewQuestion = async (req, res) => {
     }
     catch (error) {
         res.status(400).json({ error: "Всё плохо!" });
+    }
+};
+export const addNewQuestionTemplate = async (req, res) => {
+    try {
+        const result = await addNewQuestionTemplateInBD(req.body);
+        res.status(201).json(result);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Ошибка при создании шаблона", error });
     }
 };

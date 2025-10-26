@@ -4,6 +4,7 @@ import {
   answerService,
   getQuestions,
   addNewQuestionInBD,
+  addNewQuestionTemplateInBD,
 } from "../services/QuestionService";
 
 export const useQuestion = async (req: Request, res: Response) => {
@@ -49,5 +50,14 @@ export const addNewQuestion = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Ответ принят" });
   } catch (error) {
     res.status(400).json({ error: "Всё плохо!" });
+  }
+};
+
+export const addNewQuestionTemplate = async (req: Request, res: Response) => {
+  try {
+    const result = await addNewQuestionTemplateInBD(req.body);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Ошибка при создании шаблона", error });
   }
 };

@@ -107,7 +107,7 @@ export const addNewQuestionInBD = async (questionIn) => {
                     id: true,
                 },
             });
-            console.log("Мы работаем с БД");
+            console.log("Мы работаем с БД с вопросами");
             console.log(questionIn);
             const createdOptions = await tx.questionOption.createMany({
                 data: questionIn.answers.map((text) => ({
@@ -125,6 +125,50 @@ export const addNewQuestionInBD = async (questionIn) => {
     }
     catch (error) {
         console.error("Error creating question with options:", error);
+    }
+};
+export const addNewQuestionTemplateInBD = async (templateIn) => {
+    if (!templateIn) {
+        throw new Error("Данные не пришли");
+    }
+    try {
+        const result = await prisma.$transaction(async (tx) => {
+            const createdTemplate = await tx.questionTemplate.create({
+                data: {
+                    title: templateIn.title,
+                    question: templateIn.question,
+                    category: templateIn.category,
+                    imageUrl: templateIn.imageUrl,
+                    multiSelect: templateIn.multiSelect,
+                    regionIndex: templateIn.regionIndex,
+                    authorId: templateIn.authorId,
+                    activeDuration: templateIn.activeDuration,
+                    isActive: templateIn.isActive ?? true,
+                    startAt: templateIn.startAt ?? new Date(),
+                    lastGenerated: templateIn.lastGenerated ?? new Date(),
+                    createdAt: new Date(),
+                },
+                select: {
+                    id: true,
+                },
+            });
+            console.log("Создан шаблон вопроса:", createdTemplate);
+            const createdOptions = await tx.questionOptionTemplate.createMany({
+                data: templateIn.answers.map((text) => ({
+                    text,
+                    templateId: createdTemplate.id,
+                })),
+            });
+            return {
+                templateId: createdTemplate.id,
+                optionsCount: createdOptions.count,
+            };
+        });
+        return result;
+    }
+    catch (error) {
+        console.error("Ошибка при создании шаблона вопроса:", error);
+        throw error;
     }
 };
 // services/saveDataService.ts
