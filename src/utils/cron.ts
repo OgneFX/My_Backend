@@ -4,7 +4,7 @@ import { cloneRecurringQuestions } from "../services/QuestionService";
 
 export const startCronJobs = () => {
   cron.schedule(
-    "*/10 * * * *",
+    "*/3 * * * *",
     async () => {
       console.log("Running daily question cloning...");
       try {
