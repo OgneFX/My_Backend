@@ -95,6 +95,7 @@ export const addNewQuestionInBD = async (questionIn) => {
                     title: questionIn.title,
                     question: questionIn.question,
                     multiSelect: questionIn.multiSelect,
+                    regionIndex: questionIn.regionIndex,
                     category: questionIn.category,
                     imageUrl: questionIn.imageUrl,
                     isRecurring: questionIn.isRecurring,

@@ -99,6 +99,7 @@ export interface IForAddNewQuestion {
   isRecurring: boolean;
   multiSelect: boolean;
   activeUntil: Date;
+  regionIndex: number;
   authorId: number;
   question: string;
   title: string;
