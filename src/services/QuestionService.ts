@@ -99,7 +99,7 @@ export const getQuestions = async (userId: number) => {
       createdAt: "desc",
     },
   });
-
+  console.log("ОТДАЕМ ВОПРОСЫ", questions);
   return questions;
 };
 

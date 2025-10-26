@@ -81,6 +81,7 @@ export const getQuestions = async (userId) => {
             createdAt: "desc",
         },
     });
+    console.log("ОТДАЕМ ВОПРОСЫ", questions);
     return questions;
 };
 export const addNewQuestionInBD = async (questionIn) => {
